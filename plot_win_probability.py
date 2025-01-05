@@ -62,7 +62,7 @@ def plot_probabilities_percent(
     labels = ['Away' if away_team[0] is None else away_team[0], 'OT', 'Home' if home_team[0] is None else home_team[0]]
     colors = ['#D3D3D3'if away_team[1] is None else away_team[1], 'white', 'black' if home_team[1] is None else home_team[1]]  # Dark blue, light grey, red
 
-    plt.figure(figsize=(12, 6))
+    fig = plt.figure(figsize=(12, 6))
     plt.stackplot(
         x_axis,
         y_axis_percent[:, 0],  # Away Win
@@ -97,7 +97,7 @@ def plot_probabilities_percent(
         plt.text(time_passed, 55, "Live", fontsize = 18, color='black')
 
     plt.tight_layout()
-    plt.show()
+    return fig
 
 
 def plot_specific_game(game_id: str, home_team: Optional[str] = None, away_team: Optional[str] = None, live: bool = False) -> None:
@@ -139,11 +139,12 @@ def plot_specific_game(game_id: str, home_team: Optional[str] = None, away_team:
     y_axis = np.array(y_axis)
 
     if home_team is None or away_team is None:
-        plot_probabilities_percent(x_axis=x_axis, y_axis=y_axis, time_passed=time_passed)
+        fig = plot_probabilities_percent(x_axis=x_axis, y_axis=y_axis, time_passed=time_passed)
     else:
         home_color_one, home_color_two, away_color_one, away_color_two = get_team_colors(home_team=home_team, away_team=away_team)
-        plot_probabilities_percent(x_axis=x_axis, y_axis=y_axis, home_team=(home_team, home_color_one, home_color_two), away_team=(away_team, away_color_one, away_color_two), time_passed=time_passed)
-    
+        fig = plot_probabilities_percent(x_axis=x_axis, y_axis=y_axis, home_team=(home_team, home_color_one, home_color_two), away_team=(away_team, away_color_one, away_color_two), time_passed=time_passed)
+    return fig
+
 def get_team_colors(home_team: str, away_team: str) -> Tuple[str, str, str, str]:
     """
     Get the primary and secondary colors for home and away teams.
