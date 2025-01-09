@@ -127,7 +127,7 @@ def plot_specific_game(game_id: str, home_team: Optional[str] = None, away_team:
 
     x_axis = []
     y_axis = []
-    model = NHLMarkovModel.load('NHL_Markov_Model_home.pkl')
+    model = NHLMarkovModel.load('NHL_Markov_Model.pkl')
 
     for n in range(0, goals_state.shape[0]):
 
