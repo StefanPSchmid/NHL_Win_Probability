@@ -2,6 +2,8 @@ import requests
 import numpy as np
 from datetime import timedelta
 from typing import Optional, Tuple
+import time
+import streamlit as st
 
 from NHLMarkovModel import NHLMarkovModel
 from process_game import create_score_timeline
@@ -118,7 +120,11 @@ def plot_specific_game(game_id: str, home_team: Optional[str] = None, away_team:
     else:
         print(f"Failed to retrieve data; Status Code: {response.status_code}")
 
+    start_time = time.time()
+
     goals_state, situations_state, location_state = create_score_timeline(plays=data['plays'])
+
+    st.info(f"Game processing done in time: {time.time() - start_time}")
 
     time_passed = None
     if live:
@@ -131,9 +137,15 @@ def plot_specific_game(game_id: str, home_team: Optional[str] = None, away_team:
 
     for n in range(0, goals_state.shape[0]):
 
+        start_time = time.time()
+
         trajectories = model.propagate(goals_state[n], situations_state[n], location_state[n], max(360 - 1 - n, 0))
         x_axis.append(n * 10)
         y_axis.append([np.sum(trajectories[0:342]), np.sum(trajectories[342:342+57]), np.sum(trajectories[342+57:741])]) # away win, draw, home win
+
+        if not n%10:
+
+            st.info(f"Iteration {n} done in time: {time.time() - start_time}")
 
     x_axis = np.array(x_axis)
     y_axis = np.array(y_axis)

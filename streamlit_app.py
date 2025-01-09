@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import datetime, date
 from handle_api import get_game_id
 from plot_win_probability import plot_specific_game
+import time
 
 def main():
     st.title("NHL Win Probability Predictor")
@@ -78,6 +79,7 @@ def main():
     # Generate button
     if st.button("Generate Win Probability Plot"):
         try:
+            start_time = time.time()
             with st.spinner("Fetching game data and generating plot..."):
                 # Get game ID and create plot
                 game_id, live = get_game_id(home_team=home_team, away_team=away_team, date=date_str)
@@ -93,6 +95,8 @@ def main():
                     
                     # Display the plot
                     st.pyplot(fig)
+
+                    st.info(f"Entire processing took {time.time() - start_time}")
                 else:
                     st.error("No game found for the selected teams and date.")
         except Exception as e:
