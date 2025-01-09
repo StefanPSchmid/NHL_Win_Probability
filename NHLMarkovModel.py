@@ -1,6 +1,7 @@
 from typing import Dict, List, Tuple, Optional, Union, Sequence
 import numpy as np
 import pickle
+import os
 
 class NHLMarkovModel:
     """A Markov model for analyzing NHL game states and transitions.
@@ -115,8 +116,14 @@ class NHLMarkovModel:
         
         state_probabilities = np.zeros(self.n_states)
         state_probabilities[current_state] = 1.0
+
+        if os.path.exists(f"matrices/{n_steps}.npy"):
+            matrix = np.load(f"matrices/{n_steps}.npy")
+        else:
+            matrix = np.linalg.matrix_power(self.transitions, n_steps)
+            np.save(f"matrices/{n_steps}.npy", matrix)
         
-        final_probabilities = state_probabilities @ np.linalg.matrix_power(self.transitions, n_steps)
+        final_probabilities = state_probabilities @ matrix
         return final_probabilities
     
     def save(self, filepath: str) -> None:
